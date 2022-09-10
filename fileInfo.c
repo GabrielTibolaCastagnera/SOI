@@ -1,3 +1,8 @@
+/*
+Gabriel Tibola Castagnera
+Willian Brun
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
