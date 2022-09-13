@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
     long int maxrss = usage.ru_maxrss;
 
     // printa os dados
-    printf("File size: %lld bytes\n", size);
+    printf("File size: %ld bytes\n", size);
     printf("Last file access: %s", ctime(&lastAccess));
     printf("Last file modification: %s", ctime(&lastModification));
 
@@ -109,7 +109,7 @@ int main(int argc, char *argv[])
 
     // printa os dados do processo
     printf("\nProcess Information of %s:\n", argv[0]);
-    printf("ID process: %d\n", getpid());
+    printf("process ID: %d\n", getpid());
     printf("Group ID: %d\n", getgid());
 
     // printa o uso da CPU e memória
