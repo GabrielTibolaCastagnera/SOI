@@ -10,8 +10,11 @@ Willian Brun
 #include <time.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <sys/time.h> 
+#include <sys/resource.h>
 #include <fcntl.h>
-// função que lê um arquivo e mostra no terminal usan system calls
+
+// função que lê um arquivo e mostra no terminal usando system calls
 void printFile(char *fileName, int size)
 {
     int file = open(fileName, 0);
@@ -24,7 +27,6 @@ void printFile(char *fileName, int size)
 
 int main(int argc, char *argv[])
 {
-
     // Verifica se apenas/exatamente um parâmetro foi informado
     if (argc < 2)
     {
@@ -36,16 +38,19 @@ int main(int argc, char *argv[])
         printf("Too many arguments\n");
         exit(1);
     }
+
     // Verifica se o caminho informado é valido
     if (access(argv[1], F_OK) != 0)
     {
         printf("File path invalid.\n");
         exit(1);
     }
+
     char fileName[100];
     strcpy(fileName, argv[1]);
     printf("File Information\n");
     printf("File name: %s\n", argv[1]);
+
     // Verifica se é possível ler o arquivo
     if (fopen(fileName, "r"))
     {
@@ -55,6 +60,7 @@ int main(int argc, char *argv[])
     {
         printf("The current process cannot read the file.\n");
     }
+
     // Verifica se é possível escrever no arquivo
     if (fopen(fileName, "a"))
     {
@@ -64,12 +70,14 @@ int main(int argc, char *argv[])
     {
         printf("The current process cannot write the file.\n");
     }
+
     // cria o comando para saber o tipo dele
     char comand[100];
     strcpy(comand, "file ");
     strcat(comand, fileName);
     // mostra o tipo
     system(comand);
+
     // Pegar os dados do arquivo
     struct stat st;
     stat(fileName, &st);
@@ -79,8 +87,19 @@ int main(int argc, char *argv[])
     long int lastAccess = st.st_atime;
     //última modificação
     long int lastModification = st.st_mtime;
+
+    //Recebe os dados do uso da CPU
+    struct rusage usage;
+    getrusage (RUSAGE_SELF, &usage);
+    //uso da CPU em modo usuário
+    long int utime = usage.ru_utime.tv_usec;
+    //uso da CPU em modo sistema
+    long int stime = usage.ru_stime.tv_usec;
+    //uso da memoria residente
+    long int maxrss = usage.ru_maxrss;
+
     // printa os dados
-    printf("File size: %ld bytes\n", size);
+    printf("File size: %lld bytes\n", size);
     printf("Last file access: %s", ctime(&lastAccess));
     printf("Last file modification: %s", ctime(&lastModification));
 
@@ -92,6 +111,11 @@ int main(int argc, char *argv[])
     printf("\nProcess Information of %s:\n", argv[0]);
     printf("ID process: %d\n", getpid());
     printf("Group ID: %d\n", getgid());
+
+    // printa o uso da CPU e memória
+    printf("User CPU time used: %ld us\n", utime);
+    printf("System CPU time used: %ld us\n", stime);
+    printf("Resident memory used: %ld bytes\n", maxrss);
 
     return 0;
 }
