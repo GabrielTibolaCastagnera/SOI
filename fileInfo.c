@@ -18,6 +18,9 @@ Willian Brun
 void printFile(char *fileName, int size)
 {
     int file = open(fileName, 0);
+    if(file < 0){
+        return;
+    }
     char *buffer = (char *)malloc(sizeof(char) * size);
     read(file, buffer, size);
     write(1, buffer, size);
@@ -97,7 +100,6 @@ int main(int argc, char *argv[])
     long int stime = usage.ru_stime.tv_usec;
     //uso da memoria residente
     long int maxrss = usage.ru_maxrss;
-
     // printa os dados
     printf("File size: %ld bytes\n", size);
     printf("Last file access: %s", ctime(&lastAccess));
